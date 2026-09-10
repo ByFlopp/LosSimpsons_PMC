@@ -1,34 +1,14 @@
-# Documentación
+# Documentación de referencia
 
-Fuente de verdad del proyecto. Si una decisión no está aquí, no está tomada.
+Material de la asignatura TLY1102 (Técnicas Avanzadas de Machine Learning I) usado como base para este proyecto:
 
-## Mapa
+- `EP1_TLY1102_Instrucciones y Pauta PRESENTACIÓN_Estudiante.pdf` — enunciado y rúbrica de la Evaluación Parcial N°1.
+- `1.1.1_PPT_El_Perceptron.pdf` — el perceptrón.
+- `1.2.1_PPT_Redes_Fully_Connected.pdf` — redes fully connected.
+- `1.2.2_PPT_Backpropagation.pdf` — backpropagation.
+- `1.3.1 Descenso del Gradiente.pdf` — descenso del gradiente.
+- `1.3.2_Optimizadores.pdf` — optimizadores.
+- `1.4.1_PPT_Diseno_y_Evaluacion_Modelos.pdf` — diseño y evaluación de modelos.
+- `1.4.2_Implementacion_con_Keras.pdf` — implementación con Keras.
 
-| Carpeta | Responde a | Ejemplos |
-| --- | --- | --- |
-| [`product/`](product/) | Qué construimos y para quién | visión, alcance, usuarios, contenido |
-| [`design/`](design/) | Cómo se ve y se siente | design system, identidad, accesibilidad |
-| [`architecture/`](architecture/) | Cómo está construido y por qué | stack, estructura, modelo de datos, ADRs |
-| [`development/`](development/) | Cómo se trabaja en él | entorno, convenciones, testing, flujo git |
-| [`performance-seo/`](performance-seo/) | Cómo se mide la calidad | presupuesto de rendimiento, checklist SEO, Core Web Vitals |
-| [`operations/`](operations/) | Cómo vive en producción | despliegue, entornos, seguridad, incidentes |
-| [`assets/`](assets/) | Imágenes de la documentación | diagramas, capturas |
-
-## Reglas de organización
-
-1. **Nada suelto en la raíz de `docs/`.** El único archivo permitido aquí es este `README.md`. Todo documento pertenece a una categoría.
-2. **Un documento, un lugar.** Si encaja en dos categorías, decide por el lector: quien lo busca, ¿qué pregunta se está haciendo? Esa es la carpeta. No duplicar; enlazar.
-3. **Máximo dos niveles** dentro de una categoría. Si necesitas un tercero, la categoría está mal planteada o el documento debería dividirse.
-4. **Nombres en kebab-case, sin acentos ni ñ**, descriptivos y en español: `modelo-de-datos.md`, `checklist-seo.md`. Nunca `doc1.md` ni `notas.md`.
-5. **Cada carpeta mantiene su `README.md`** con una línea por documento. Si añades un documento, añades su línea.
-6. **Las decisiones técnicas van a `architecture/decisions/`** como ADR numerado, no dispersas en otros documentos.
-7. **Lo que caduca lleva fecha.** Benchmarks, auditorías y snapshots empiezan con `> Actualizado: DD-MM-AAAA`. Sin fecha, se asume vigente y eso miente.
-8. **Las imágenes van a `assets/<categoria>/`**, referenciadas con rutas relativas. Nunca imágenes junto al documento.
-9. **Un documento que ya no es verdad se borra o se corrige**, no se deja "por si acaso". El historial de git cumple esa función.
-
-## Al empezar un proyecto nuevo
-
-1. Completar `product/vision.md` y el bloque `Objetivo` de [`.claude/CLAUDE.md`](../.claude/CLAUDE.md).
-2. Rellenar `design/design-system.md` con la identidad real.
-3. Registrar el stack elegido como primer ADR en `architecture/decisions/`.
-4. Borrar los documentos plantilla que el proyecto no vaya a usar.
+El informe técnico del proyecto (problema de negocio, objetivos, KPIs, EDA y metodología CRISP-DM) vive en el [`README.md`](../README.md) de la raíz, y el desarrollo completo en [`notebooks/01_clasificacion_los_simpson_mlp.ipynb`](../notebooks/01_clasificacion_los_simpson_mlp.ipynb).

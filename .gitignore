@@ -6,9 +6,24 @@
 !.claude/skills
 
 # Entorno y secretos
-#.env
-#.env.*
-#!.env.example
+.env
+.env.*
+!.env.example
+
+# Dataset (se descarga con scripts/descargar_dataset.py, no se versiona)
+data/raw/*
+data/processed/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+
+# Artefactos de entrenamiento (se regeneran al ejecutar el notebook)
+models/*
+!models/.gitkeep
+*.keras
+*.h5
+
+# Jupyter
+.ipynb_checkpoints/
 
 # Dependencias
 node_modules/
