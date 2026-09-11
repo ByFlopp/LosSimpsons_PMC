@@ -1,5 +1,13 @@
 # Documentación de referencia
 
+## Documento del proyecto
+
+- [`GUIA_DEL_PROYECTO.md`](GUIA_DEL_PROYECTO.md) — explicación completa del trabajo: el problema, el
+  pipeline de pre-procesamiento, la arquitectura del MLP, los experimentos, los resultados en test y
+  las limitaciones estructurales del modelo. Pensado para leerse sin abrir el notebook.
+
+## Material del curso
+
 Material de la asignatura TLY1102 (Técnicas Avanzadas de Machine Learning I) usado como base para este proyecto:
 
 - `EP1_TLY1102_Instrucciones y Pauta PRESENTACIÓN_Estudiante.pdf` — enunciado y rúbrica de la Evaluación Parcial N°1.
