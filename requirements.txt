@@ -6,5 +6,4 @@ scikit-learn
 pillow
 tensorflow
 jupyter
-kaggle
 python-dotenv
