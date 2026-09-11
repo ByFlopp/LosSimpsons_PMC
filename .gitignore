@@ -57,3 +57,7 @@ Desktop.ini
 *.log
 npm-debug.log*
 pnpm-debug.log*
+
+# Entorno virtual
+.venv/
+venv/
