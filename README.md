@@ -126,6 +126,51 @@ Cada experimento modifica una sola variable, manteniendo la semilla, división d
 | E1 | Una capa de 512 neuronas | 0,253 | 0,280 |
 | E3 | Activación `tanh` | 0,007 | 0,034 |
 
+## Rendimiento: CPU frente a GPU
+
+Los dos notebooks entrenan exactamente el mismo MLP y solo cambia el dispositivo, así que la diferencia de tiempos se puede atribuir al hardware. Las corridas se hicieron en el mismo equipo —Intel Core i7-13620H con NVIDIA GeForce RTX 4060 Laptop— con TensorFlow 2.21.0: las de CPU sobre Windows 11 y las de GPU sobre WSL2. Cada corrida deja su resumen en `resultados/<CPU|GPU>/rendimiento_<entorno>_<resolución>.json`.
+
+<p align="center">
+  <img src="images/imageCPU.png" alt="Administrador de tareas durante el entrenamiento en CPU: procesador al 92%" width="49%">
+  <img src="images/imageGPU.png" alt="Administrador de tareas durante el entrenamiento en GPU: RTX 4060 con VRAM reservada y uso intermitente" width="49%">
+</p>
+
+<p align="center"><em>Izquierda: entrenamiento en CPU, con el procesador saturado al 92 %. Derecha: entrenamiento en GPU, donde TensorFlow reserva los 8 GB de VRAM pero el uso del núcleo aparece a picos y vuelve a cero entre lote y lote.</em></p>
+
+### Tiempo por época
+
+La comparación usa `benchmark_segundos_por_epoca`, que es la única cifra homogénea: reentrena la arquitectura base (`512 → 256`) unas pocas épocas con el mismo batch y sin *callbacks*, descartando la primera época porque incluye la compilación del grafo. Los tiempos de las secciones anteriores no sirven para comparar, ya que la parada temprana hace que cada configuración corra un número distinto de épocas.
+
+| Resolución | Segundos/época CPU | Segundos/época GPU | Aceleración | Corrida completa CPU | Corrida completa GPU |
+|---|---:|---:|---:|---:|---:|
+| 32 × 32 | 1,20 | 1,48 | **0,81 ×** | 5:49 | 9:18 |
+| 64 × 64 | 5,03 | 2,60 | **1,93 ×** | 17:19 | 7:18 |
+| 128 × 128 | 16,49 | 1,40 | **11,8 ×** | 44:40 | 11:42 |
+
+### Qué muestran estos números
+
+**La GPU está limitada por la sobrecarga, no por el cálculo.** Su columna de tiempos es plana: 1,48 → 2,60 → 1,40 segundos por época, mientras la entrada crece dieciséis veces entre 32 × 32 y 128 × 128. Con 12.909 imágenes y batch de 128 son unos 101 pasos por época, cada uno demasiado pequeño, de modo que lo que se mide es el lanzamiento de los *kernels* y la sobrecarga del intérprete, no las multiplicaciones de matrices. Existe un piso cercano a 1,4 segundos por época que no baja. La captura del Administrador de tareas lo refleja: la VRAM queda reservada por completo, pero el uso del núcleo sube a picos y vuelve a cero entre lote y lote.
+
+**La CPU, en cambio, escala de forma casi lineal con el tamaño de la entrada:** 1,20 → 5,03 → 16,49 segundos por época, es decir factores de 4,2 y 3,3 cuando la entrada se multiplica por 4 cada vez. Está trabajando a plena carga todo el tiempo, como confirma el 92 % de uso del procesador.
+
+De ahí viene la aceleración de 11,8 × en 128 × 128: no es que la GPU mejore, sino que la CPU empeora mientras la GPU se mantiene. El punto de cruce está justo por encima de 32 × 32, donde el modelo es tan pequeño que trasladar los datos cuesta más que calcularlos y la CPU resulta más rápida.
+
+**El valor de 2,60 en 64 × 64 no encaja con el patrón** y conviene leerlo con reservas: queda por encima tanto de 32 × 32 como de 128 × 128, cuando debería situarse entre ambos. El *benchmark* promedia solo dos épocas, así que cualquier contención de WSL o limitación térmica se cuela entera en la medida.
+
+**En inferencia la ventaja se invierte.** La CPU procesa 15.318 imágenes por segundo en 32 × 32 y 2.799 en 128 × 128, frente a 9.902 y 2.551 de la GPU. Por la misma razón: `predict` sobre un modelo denso pequeño no alcanza a amortizar el traslado de datos por PCIe.
+
+**Cambiar de dispositivo no cambia lo que el modelo aprende.** El *accuracy* de prueba se mantiene en la misma banda en las seis corridas —52,1 / 53,3 / 52,9 % en CPU y 53,5 / 49,5 / 51,7 % en GPU—, que es justamente lo que debe ocurrir. Tampoco lo cambia la resolución: 128 × 128 usa trece veces más parámetros que 32 × 32 para obtener el mismo resultado. El techo de ~53 % pertenece a la arquitectura, no al hardware ni al tamaño de la imagen, y es la misma limitación descrita en [Límites del enfoque y mejoras](#límites-del-enfoque-y-mejoras): un MLP aplana la imagen y pierde su estructura espacial.
+
+### Configuración recomendada
+
+| Escenario | Elección | Motivo |
+|---|---|---|
+| Con GPU disponible | 64 × 64 en GPU | Mejor F1 macro y *accuracy*; la corrida completa baja a poco más de 7 minutos. |
+| Solo CPU | 32 × 32 en CPU | 5:49 para prácticamente el mismo resultado que 128 × 128, que tarda 44:40. |
+| A evitar | 128 × 128 en CPU | Es la combinación más cara y no mejora ninguna métrica. |
+
+Hay una consecuencia práctica: como en GPU la resolución sale casi gratis mientras no se supere ese piso de sobrecarga, el argumento de bajar la resolución para acelerar el entrenamiento deja de aplicar en cuanto hay una GPU disponible. El cuello de botella pasa a ser la arquitectura, y el siguiente paso natural del proyecto es una CNN que aproveche esos 49.152 valores como estructura espacial y no como un vector plano.
+
 ## Estructura del repositorio
 
 ```text
@@ -140,6 +185,10 @@ Cada experimento modifica una sola variable, manteniendo la semilla, división d
 │   ├── raw/                        # Datos descargados, ignorados por Git
 │   └── processed/                  # Datos derivados, ignorados por Git
 ├── models/                         # Modelos .keras regenerables, ignorados por Git
+├── models_gpu/                     # Modelos de las corridas en GPU, ignorados por Git
+├── resultados/
+│   ├── CPU/                        # rendimiento_cpu_<resolucion>.json
+│   └── GPU/                        # rendimiento_gpu_<resolucion>.json
 ├── images/                         # Recursos visuales
 ├── requirements.txt                # Dependencias Python
 └── README.md                       # Este documento
@@ -210,6 +259,7 @@ La principal limitación del MLP aparece al aplanar la imagen: no entiende que d
 - [Notebook principal](notebooks/LosSimpsonsPMC.ipynb): implementación ejecutable.
 - [Notebook GPU](notebooks/LosSimpsons_GPU_4060M.ipynb): mismo MLP entrenado sobre GPU en WSL.
 - [Guía de ejecución en GPU](notebooks/README_GPU.md): requisitos, kernel CUDA y solución de problemas.
+- [Resúmenes de rendimiento](resultados/): un JSON por corrida con tiempos, entorno y métricas.
 
 ## Integrantes
 
