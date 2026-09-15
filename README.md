@@ -81,6 +81,18 @@ flowchart LR
 
 Cada imagen de `64 × 64 × 3` se convierte en una fila de 12.288 números. La arquitectura E2 procesa esa fila así:
 
+<p align="center">
+  <img src="images/arquitectura_mlp.png" alt="Diagrama del perceptrón multicapa: la imagen se redimensiona a 64 × 64, se aplana en 12.288 valores y atraviesa tres capas densas de 1024, 512 y 256 neuronas con ReLU, BatchNorm y Dropout, hasta una capa softmax de 25 salidas" width="100%">
+</p>
+
+<p align="center"><em>Recorrido de una imagen de prueba por la red. Cada círculo es una neurona y cada
+línea, un peso: todas las neuronas de una capa reciben la salida de todas las anteriores. El dibujo
+muestra unas pocas neuronas por capa —las reales son 1024, 512 y 256— y las probabilidades de la
+derecha son la salida real de <code>models/mlp_final.keras</code> para esa imagen. Se regenera con
+<code>scripts/generar_diagrama_arquitectura.py</code>.</em></p>
+
+El mismo recorrido, capa por capa:
+
 ```mermaid
 flowchart TB
     I[Entrada: imagen RGB aplanada<br/>12 288 valores] --> D1
@@ -270,8 +282,11 @@ valores como estructura espacial y no como un vector plano.
 │   ├── CPU/                        # rendimiento_cpu_<resolucion>.json
 │   └── GPU/                        # rendimiento_gpu_<resolucion>.json
 ├── images/                         # Recursos visuales
+│   ├── arquitectura_mlp.png        # Diagrama de la red (generado por script)
+│   └── ejemplo_homer.jpg           # Imagen de prueba usada en el diagrama
 ├── scripts/
-│   └── ejecutar_notebook_gpu.ps1   # Ejecuta el notebook de GPU sin abrir Jupyter
+│   ├── ejecutar_notebook_gpu.ps1   # Ejecuta el notebook de GPU sin abrir Jupyter
+│   └── generar_diagrama_arquitectura.py  # Redibuja images/arquitectura_mlp.png
 ├── requirements.txt                # Dependencias Python (CPU)
 ├── requirements-gpu-windows.txt    # Dependencias del entorno GPU
 └── README.md                       # Este documento
