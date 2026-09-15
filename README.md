@@ -256,24 +256,28 @@ valores como estructura espacial y no como un vector plano.
 
 ```text
 .
-├── notebooks/LosSimpsonsPMC.ipynb  # MLP: código, entrenamiento, evaluación y predicción
-├── notebooks/LosSimpsons_GPU_4060M.ipynb # Mismo MLP en GPU (Windows nativo + RTX 4060)
-├── notebooks/README_GPU.md         # Cómo ejecutar el notebook en GPU
-├── docs/GUIA_DEL_PROYECTO.md       # Análisis técnico completo del trabajo
-├── docs/                           # Material de apoyo de la asignatura
-├── data/
-│   ├── README.md                   # Fuente y estructura esperada de los datos
-│   ├── raw/                        # Datos descargados, ignorados por Git
-│   └── processed/                  # Datos derivados, ignorados por Git
+├── notebooks/
+│   ├── LosSimpsonsPMC.ipynb        # MLP: código, entrenamiento, evaluación y predicción
+│   ├── LosSimpsons_GPU_4060M.ipynb # Mismo MLP en GPU (Windows nativo + RTX 4060)
+│   └── README_GPU.md               # Cómo ejecutar el notebook en GPU
+├── docs/
+│   ├── Informe.md                  # Informe técnico del proyecto
+│   ├── EP1_TLY1102_Instrucciones y Pauta PRESENTACIÓN_Estudiante.pdf
+│   └── material_complementario/    # Material de apoyo de la asignatura
 ├── models/                         # Modelos .keras regenerables, ignorados por Git
 ├── models_gpu/                     # Modelos de las corridas en GPU, ignorados por Git
 ├── resultados/
 │   ├── CPU/                        # rendimiento_cpu_<resolucion>.json
 │   └── GPU/                        # rendimiento_gpu_<resolucion>.json
 ├── images/                         # Recursos visuales
-├── requirements.txt                # Dependencias Python
+├── scripts/
+│   └── ejecutar_notebook_gpu.ps1   # Ejecuta el notebook de GPU sin abrir Jupyter
+├── requirements.txt                # Dependencias Python (CPU)
+├── requirements-gpu-windows.txt    # Dependencias del entorno GPU
 └── README.md                       # Este documento
 ```
+
+El dataset no forma parte del repositorio: se descarga aparte y se deja en una ubicación externa, como se explica en [Descargar los datos fuera del repositorio](#2-descargar-los-datos-fuera-del-repositorio).
 
 ## Cómo reproducir el proyecto
 
@@ -336,7 +340,8 @@ La principal limitación del MLP aparece al aplanar la imagen: no entiende que d
 
 ## Referencias internas
 
-- [Información de los datos](data/README.md): fuente y estructura esperada.
+- [Informe técnico](docs/Informe.md): problema de negocio, KPIs, EDA, metodología CRISP-DM y análisis de resultados.
+- [Pauta de la evaluación](docs/EP1_TLY1102_Instrucciones%20y%20Pauta%20PRESENTACI%C3%93N_Estudiante.pdf): instrucciones y rúbrica.
 - [Notebook principal](notebooks/LosSimpsonsPMC.ipynb): implementación ejecutable.
 - [Notebook GPU](notebooks/LosSimpsons_GPU_4060M.ipynb): mismo MLP entrenado sobre GPU en Windows nativo, con un bucle de entrenamiento propio sobre PyTorch.
 - [Guía de ejecución en GPU](notebooks/README_GPU.md): entorno de Windows nativo, decisiones de rendimiento y solución de problemas.
