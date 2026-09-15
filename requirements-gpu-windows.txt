@@ -1,0 +1,28 @@
+# Entorno GPU para Windows nativo (sin WSL).
+#
+# TensorFlow no soporta GPU en Windows desde la version 2.11, asi que este
+# notebook usa Keras 3 sobre el backend de PyTorch, que si tiene CUDA nativo
+# en Windows. El modelo se define con la API de Keras; el bucle de
+# entrenamiento se escribe a mano sobre PyTorch para no dejar la GPU esperando.
+#
+# Instalacion (Python 3.13):
+#   py -3.13 -m venv .venv-gpu
+#   .venv-gpu\Scripts\Activate.ps1
+#   pip install torch==2.14.0 --index-url https://download.pytorch.org/whl/cu130
+#   pip install -r requirements-gpu-windows.txt
+#
+# El wheel de torch trae sus propias bibliotecas CUDA: no hace falta instalar
+# el CUDA Toolkit. Solo se necesita un driver NVIDIA reciente (>= 580).
+
+# torch se instala aparte, desde el indice de PyTorch (ver arriba):
+# torch==2.14.0+cu130
+
+keras>=3.15
+numpy
+pandas
+matplotlib
+seaborn
+scikit-learn
+pillow
+jupyter
+ipykernel

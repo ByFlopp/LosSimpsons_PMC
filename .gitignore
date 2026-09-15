@@ -61,3 +61,6 @@ pnpm-debug.log*
 # Entorno virtual
 .venv/
 venv/
+# Entorno GPU de Windows nativo: PyTorch ocupa varios GB
+.venv-gpu/
+
